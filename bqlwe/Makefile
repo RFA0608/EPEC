@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -Wall -g -O2
 LDFLAGS = -lgmpxx -lgmp -pthread
 TARGET = bqlwe
-OBJS = struct.o util.o calc.o main.o
+OBJS = debug.o struct.o util.o calc.o main.o
 
 # 기본 타겟 (make만 입력했을 때 실행될 타겟)
 all: $(TARGET)

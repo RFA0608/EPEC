@@ -7,28 +7,35 @@
 class calc
 {
     public:
-        static matrix_t* multiple(matrix_t* obj1, matrix_t* obj2); 
-        static polynomial_t* multiple(polynomial_t* obj1, polynomial_t* obj2);
-        static polynomial_t* convolution(polynomial_t* obj1, polynomial_t* obj2);
+        static matrix_zt* multiple(matrix_zt* obj1, matrix_zt* obj2); 
+        static polynomial_zt* multiple(polynomial_zt* obj1, polynomial_zt* obj2);
+        static matrix_zt* multiple_mt(matrix_zt* obj1, matrix_zt* obj2); 
+        static polynomial_zt* multiple_mt(polynomial_zt* obj1, polynomial_zt* obj2);
 
-        static matrix_t* add(matrix_t* obj1, matrix_t* obj2);
-        static polynomial_t* add(polynomial_t* obj1, polynomial_t* obj2);
+        static polynomial_zt* convolution(polynomial_zt* obj1, polynomial_zt* obj2);
+        static polynomial_zt* convolution_mt(polynomial_zt* obj1, polynomial_zt* obj2);
 
-        static matrix_t* mult_constant(matrix_t* obj, mpz_t c);
-        static polynomial_t* mult_constant(polynomial_t* obj, mpz_t c);
+        static matrix_zt* add(matrix_zt* obj1, matrix_zt* obj2);
+        static polynomial_zt* add(polynomial_zt* obj1, polynomial_zt* obj2);
+        static matrix_zt* add_mt(matrix_zt* obj1, matrix_zt* obj2);
+        static polynomial_zt* add_mt(polynomial_zt* obj1, polynomial_zt* obj2);
 
-        static matrix_t* identity(matrix_t* obj);
-        static polynomial_t* identity(polynomial_t* obj);
+        static matrix_zt* mult_constant(matrix_zt* obj, mpz_t c);
+        static polynomial_zt* mult_constant(polynomial_zt* obj, mpz_t c);
 
-        static matrix_t* transpose(matrix_t* obj);
+        static matrix_zt* identity(matrix_zt* obj);
+        static polynomial_zt* identity(polynomial_zt* obj);
 
-        static polynomial_t* flip(polynomial_t* obj);
+        static matrix_zt* transpose(matrix_zt* obj);
+        static matrix_zt* transpose_mt(matrix_zt* obj);
 
-        static matrix_t* modulo(matrix_t* obj, mpz_t q);
+        static polynomial_zt* flip(polynomial_zt* obj);
 
-        static polynomial_t* coeficient_modulo(polynomial_t* obj, mpz_t q);
+        static matrix_zt* modulo(matrix_zt* obj, mpz_t q);
+
+        static polynomial_zt* coeficient_modulo(polynomial_zt* obj, mpz_t q);
         
-        static polynomial_t* ring_modulo(polynomial_t* obj, mpz_t N);
+        static polynomial_zt* ring_modulo(polynomial_zt* obj, mpz_t N);
 };
 
 #endif
