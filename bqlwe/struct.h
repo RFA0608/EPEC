@@ -2,6 +2,7 @@
 #define STRUCT_H
 
 #include <iostream>
+#include <format>
 #include <gmpxx.h>
 
 // zt : mpz, ft : mpf, 64ft : double, 64it : int64_t
@@ -12,12 +13,14 @@ class scalar_zt
         mpz_t* scalar;
         uint64_t* size;
         char type;
+        char space;
     public:
         scalar_zt();
         ~scalar_zt();
-        mpz_t* return_scalar();
+        mpz_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class scalar_ft
@@ -26,12 +29,14 @@ class scalar_ft
         mpf_t* scalar;
         uint64_t* size;
         char type;
+        char space;
     public:
         scalar_ft();
         ~scalar_ft();
-        mpf_t* return_scalar();
+        mpf_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class scalar_64it
@@ -40,12 +45,14 @@ class scalar_64it
         int64_t* scalar;
         uint64_t* size;
         char type;
+        char space;
     public:
         scalar_64it();
         ~scalar_64it();
-        int64_t* return_scalar();
+        int64_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class scalar_64ft
@@ -54,12 +61,14 @@ class scalar_64ft
         double* scalar;
         uint64_t* size;
         char type;
+        char space;
     public:
         scalar_64ft();
         ~scalar_64ft();
-        double* return_scalar();
+        double* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 // =================================================================================== //
@@ -70,12 +79,14 @@ class matrix_zt
         mpz_t* matrix;
         uint64_t* size;
         char type;
+        char space;
     public:
         matrix_zt(uint64_t row, uint64_t col);
         ~matrix_zt();
-        mpz_t* return_matrix();
+        mpz_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class matrix_ft
@@ -84,12 +95,14 @@ class matrix_ft
         mpf_t* matrix;
         uint64_t* size;
         char type;
+        char space;
     public:
         matrix_ft(uint64_t row, uint64_t col);
         ~matrix_ft();
-        mpf_t* return_matrix();
+        mpf_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class matrix_64it
@@ -98,12 +111,14 @@ class matrix_64it
         int64_t* matrix;
         uint64_t* size;
         char type;
+        char space;
     public:
         matrix_64it(uint64_t row, uint64_t col);
         ~matrix_64it();
-        int64_t* return_matrix();
+        int64_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class matrix_64ft
@@ -112,12 +127,14 @@ class matrix_64ft
         double* matrix;
         uint64_t* size;
         char type;
+        char space;
     public:
         matrix_64ft(uint64_t row, uint64_t col);
         ~matrix_64ft();
-        double* return_matrix();
+        double* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 // =================================================================================== //
@@ -128,12 +145,14 @@ class polynomial_zt
         mpz_t* polynomial;
         uint64_t* size;
         char type;
+        char space;
     public:
         polynomial_zt(uint64_t order);
         ~polynomial_zt();
-        mpz_t* return_polynomial();
+        mpz_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class polynomial_ft
@@ -142,12 +161,14 @@ class polynomial_ft
         mpf_t* polynomial;
         uint64_t* size;
         char type;
+        char space;
     public:
         polynomial_ft(uint64_t order);
         ~polynomial_ft();
-        mpf_t* return_polynomial();
+        mpf_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class polynomial_64it
@@ -156,12 +177,14 @@ class polynomial_64it
         int64_t* polynomial;
         uint64_t* size;
         char type;
+        char space;
     public:
         polynomial_64it(uint64_t order);
         ~polynomial_64it();
-        int64_t* return_polynomial();
+        int64_t* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
 
 class polynomial_64ft
@@ -170,11 +193,16 @@ class polynomial_64ft
         double* polynomial;
         uint64_t* size;
         char type;
+        char space;
     public:
         polynomial_64ft(uint64_t order);
         ~polynomial_64ft();
-        double* return_polynomial();
+        double* return_content();
         uint64_t* return_size();
         char return_type();
+        char return_space();
 };
+
+#include "struct.tpp"
+
 #endif
