@@ -1,6 +1,6 @@
 #include "struct.h"
 #include "debug.h"
-#define mpf_prec 512
+#include "parameters.h"
 
 scalar_zt::scalar_zt()
 {

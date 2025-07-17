@@ -22,7 +22,6 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	# .d 파일도 함께 삭제
 	rm -f $(OBJS) $(DEPS) $(TARGET)
 
 # 생성된 의존성 파일들을 Makefile에 포함시킴

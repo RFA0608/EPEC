@@ -12,14 +12,16 @@ int main()
 {
     // == test calc == //
     matrix_zt* T1 = new matrix_zt(30, 10);
-    // matrix_zt* T2 = new matrix_zt(10, 30);
-    // matrix_zt* To1, *To2, *Tt1, *Tt2, *Tstv, *Tsth;
+    matrix_zt* T2 = new matrix_zt(30, 10);
 
     util::set_random_seed((unsigned long)time(NULL));
 
-    debug::print_runtime((char*)"util", (char*)"uniform_random", false);
-    util::uniform_random_mt<matrix_zt>(T1, (char*)"-10", (char*)"1");
-    debug::print_runtime((char*)"util", (char*)"uniform_random", true);
+    // debug::print_runtime((char*)"util", (char*)"uniform_random", false);
+    util::uniform_random_mt<matrix_zt>(T1, (char*)"-10", (char*)"-1");
+    util::uniform_random_mt<matrix_zt>(T2, (char*)"1", (char*)"10");
+    matrix_zt* T3 = util::stack_vertical<matrix_zt>(T1, T2);
+    matrix_zt* T4 = util::stack_horizon<matrix_zt>(T1, T2);
+    // debug::print_runtime((char*)"util", (char*)"uniform_random", true);
 
     // debug::print_runtime((char*)"util", (char*)"uniform_random_mt", false);
     // u::uniform_random_mt(T1, (char*)"0", (char*)"100000000");
@@ -58,6 +60,9 @@ int main()
     // debug::print_runtime((char*)"util", (char*)"stack_horizon", true);
 
     util::print_struct<matrix_zt>(T1);
+    util::print_struct<matrix_zt>(T2);
+    util::print_struct<matrix_zt>(T3);
+    util::print_struct<matrix_zt>(T4);
     // u::print_struct_meta(T2);
     // u::print_struct_meta(To1);
     // u::print_struct_meta(To2);
@@ -69,6 +74,9 @@ int main()
     // debug::print_runtime((char*)"util", (char*)"clear", false);
     util::clear_random_seed();
     util::clear<matrix_zt>(&T1);
+    util::clear<matrix_zt>(&T2);
+    util::clear<matrix_zt>(&T3);
+    util::clear<matrix_zt>(&T4);
     // u::clear(&T2);
     // u::clear(&To1);
     // u::clear(&To2);

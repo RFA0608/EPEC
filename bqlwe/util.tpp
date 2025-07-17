@@ -1,7 +1,6 @@
 #include "util.h"
 #include "debug.h"
-#define mpf_prec 512
-#define float_digit 5
+#include "parameters.h"
 using namespace std;
 
 const uint64_t thread_num = std::thread::hardware_concurrency() > 1 ? std::thread::hardware_concurrency() : 1;
@@ -113,8 +112,6 @@ void util::print_struct(T* obj)
     }
 }
 
-//-----------------------------------------//
-
 template <typename T>
 void util::print_struct_meta(T* obj)
 {
@@ -162,8 +159,6 @@ void util::print_struct_meta(T* obj)
         }
     }
 }
-
-//-----------------------------------------//
 
 template <typename T>
 T* util::copy(T* obj)
@@ -362,8 +357,6 @@ T* util::copy(T* obj)
     }
 }
 
-//-----------------------------------------//
-
 template <typename T>
 void util::clear(T** obj)
 {
@@ -394,129 +387,309 @@ void util::clear(T** obj)
 
 // =================================================================================== //
 
-// void util::set_entry(scalar_zt* obj, char* value)
-// {
-//     if(obj == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* scalar = obj->return_scalar();
+template <typename T>
+void util::set_entry(T* obj, char* value, uint64_t pos_row, uint64_t pos_col)
+{
+    if(obj == nullptr)
+    {
+        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"reference nullptr");
+        debug::print_error_specific((char*)"function attribution is nullptr");
+        exit(-1);
+    }
+    else
+    {
+        if constexpr (is_same_v<T, scalar_zt> || is_same_v<T, matrix_zt> || is_same_v<T, polynomial_zt>)
+        {
+            mpz_t* structure = obj->return_content();
+            uint64_t col = *(obj->return_size() + 1);
 
-//         mpz_set_str(*(scalar), value, 10);
-//     }
-// }
+            mpz_set_str(*(structure + col * (pos_col - 1) + (pos_row - 1)), value, 10);
+        }
+        else if constexpr (is_same_v<T, scalar_ft> || is_same_v<T, matrix_ft> || is_same_v<T, polynomial_ft>)
+        {
+            mpf_t* structure = obj->return_content();
+            uint64_t col = *(obj->return_size() + 1);
 
-// void util::set_entry(matrix_zt* obj, char* value, uint64_t pos_row, uint64_t pos_col)
-// {
-//     if(obj == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"set_entry", 1, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* matrix = obj->return_matrix();
-//         uint64_t row = *(obj->return_size());
-//         uint64_t col = *(obj->return_size() + 1);
-        
-//         if(pos_row < row && pos_col < col)
-//         {
-//             mpz_set_str(*(matrix + col * (pos_row - 1) + (pos_col - 1)), value, 10);
-//         }
-//         else
-//         {
-//             debug::print_error((char*)"util", (char*)"set_entry", 1, (char*)"attribution overflow");
-//             debug::print_error_specific((char*)"pos_row or pos_col are overflowing obj matrix's size");
-//             exit(-1);
-//         }
-//     }
-// }
+            mpf_set_str(*(structure + col * (pos_col - 1) + (pos_row - 1)), value, 10);
+        }
+        else if constexpr (is_same_v<T, scalar_64it> || is_same_v<T, matrix_64it> || is_same_v<T, polynomial_64it>)
+        {
+            int64_t* structure = obj->return_content();
+            uint64_t col = *(obj->return_size() + 1);
 
-// void util::set_entry(matrix_zt* obj, scalar_zt* value, uint64_t pos_row, uint64_t pos_col)
-// {
-//     if(obj == nullptr || value == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"set_entry", 2, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* matrix = obj->return_matrix();
-//         mpz_t* scalar = value->return_scalar();
-//         uint64_t row = *(obj->return_size());
-//         uint64_t col = *(obj->return_size() + 1);
-        
-//         if(pos_row < row && pos_col < col)
-//         {
-//             mpz_set(*(matrix + col * (pos_row - 1) + (pos_col - 1)), *scalar);
-//         }
-//         else
-//         {
-//             debug::print_error((char*)"util", (char*)"set_entry", 2, (char*)"attribution overflow");
-//             debug::print_error_specific((char*)"pos_row or pos_col are overflowing obj matrix's size");
-//             exit(-1);
-//         }
-//     }
-// }
+            int64_t value;
+            string_view svl(value);
+            from_chars(svl.data(), svl.data() + svl.size(), value);
 
-// void util::set_entry(polynomial_zt* obj, char* value, uint64_t pos)
-// {
-//     if(obj == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"set_entry", 3, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* polynomial = obj->return_polynomial();
-//         uint64_t col = *(obj->return_size() + 1);
-        
-//         if(pos < col)
-//         {
-//             mpz_set_str(*(polynomial + pos), value, 10);
-//         }
-//         else
-//         {
-//             debug::print_error((char*)"util", (char*)"set_entry", 3, (char*)"attribution overflow");
-//             debug::print_error_specific((char*)"pos is overflowing obj polynomial's order");
-//             exit(-1);
-//         }
-//     }
-// }
+            *(structure + col * (pos_col - 1) * (pos_row - 1)) = value;
+        }
+        else if constexpr (is_same_v<T, scalar_64ft> || is_same_v<T, matrix_64ft> || is_same_v<T, polynomial_64ft>)
+        {
+            double* structure = obj->return_content();
+            uint64_t col = *(obj->return_size() + 1);
 
-// void util::set_entry(polynomial_zt* obj, scalar_zt* value, uint64_t pos)
-// {
-//     if(obj == nullptr || value == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"set_entry", 4, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* polynomial = obj->return_polynomial();
-//         mpz_t* scalar = value->return_scalar();
-//         uint64_t col = *(obj->return_size() + 1);
-        
-//         if(pos < col)
-//         {
-//             mpz_set(*(polynomial + pos), *scalar);
-//         }
-//         else
-//         {
-//             debug::print_error((char*)"util", (char*)"set_entry", 4, (char*)"attribution overflow");
-//             debug::print_error_specific((char*)"pos is overflowing obj polynomial's order");
-//             exit(-1);
-//         }
-//     }
-// }
+            double value;
+            string_view svl(value);
+            from_chars(svl.data(), svl.data() + svl.size(), value);
+
+            *(structure + col * (pos_col - 1) * (pos_row - 1)) = value;
+        }
+        else
+        {
+            debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"non exist struct");
+            debug::print_error_specific((char*)"given struct is not defined");
+            exit(-1);
+        }
+    }
+}
+
+template <typename T, typename K>
+T* util::fetch(K* obj, uint64_t num_row, uint64_t num_col)
+{
+    if(obj == nullptr)
+    {
+        debug::print_error((char*)"util", (char*)"fetch", 0, (char*)"reference nullptr");
+        debug::print_error_specific((char*)"function attribution is nullptr");
+        exit(-1);
+    }
+    else if((uint64_t)(sizeof(obj) / sizeof(K)) != num_row * num_col)
+    {
+        debug::print_error((char*)"util", (char*)"fetch", 0, (char*)"reference size");
+        debug::print_error_specific((char*)"function attribution's condition doesn't matched, obj's size == num_row * num_col");
+        exit(-1);
+    }
+    else
+    {
+        if constexpr (is_same_v<T, scalar_zt> || is_same_v<T, matrix_zt> || is_same_v<T, polynomial_zt>)
+        {
+            if constexpr (is_same_v<T, scalar_zt>)
+            {
+                T* new_struct = new T();
+                mpz_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        mpz_set_si(*(structure + col * i + j), (int64_t) *(obj + col * i + j));
+                    }
+                }
+
+                return new_struct;
+            }
+            else if constexpr (is_same_v<T, matrix_zt>)
+            {
+                T* new_struct = new T(num_row, num_col);
+                mpz_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        mpz_set_si(*(structure + col * i + j), (int64_t) *(obj + col * i + j));
+                    }
+                }
+
+                return new_struct;
+            }
+            else
+            {
+                T* new_struct = new T(num_col);
+                mpz_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        mpz_set_si(*(structure + col * i + j), (int64_t) *(obj + col * i + j));
+                    }
+                }
+
+                return new_struct;
+            }
+        }
+        else if constexpr (is_same_v<T, scalar_ft> || is_same_v<T, matrix_ft> || is_same_v<T, polynomial_ft>)
+        {
+            if constexpr (is_same_v<T, scalar_ft>)
+            {
+                T* new_struct = new T();
+                mpf_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        mpf_set_d(*(structure + col * i + j), (double) *(obj + col * i + j));
+                    }
+                }
+
+                return new_struct;
+            }
+            else if constexpr (is_same_v<T, matrix_ft>)
+            {
+                T* new_struct = new T(num_row, num_col);
+                mpf_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        mpf_set_d(*(structure + col * i + j), (double) *(obj + col * i + j));
+                    }
+                }
+
+                return new_struct;
+            }
+            else
+            {
+                T* new_struct = new T(num_col);
+                mpf_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        mpf_set_d(*(structure + col * i + j), (double) *(obj + col * i + j));
+                    }
+                }
+
+                return new_struct;
+            }
+        }
+        else if constexpr (is_same_v<T, scalar_64it> || is_same_v<T, matrix_64it> || is_same_v<T, polynomial_64it>)
+        {
+            if constexpr (is_same_v<T, scalar_64it>)
+            {
+                T* new_struct = new T();
+                int64_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        *(structure + col * i + row) = (int64_t) *(obj + col * i + j);
+                    }
+                }
+
+                return new_struct;
+            }
+            else if constexpr (is_same_v<T, matrix_64it>)
+            {
+                T* new_struct = new T(num_row, num_col);
+                int64_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        *(structure + col * i + row) = (int64_t) *(obj + col * i + j);
+                    }
+                }
+
+                return new_struct;
+            }
+            else
+            {
+                T* new_struct = new T(num_col);
+                int64_t* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        *(structure + col * i + row) = (int64_t) *(obj + col * i + j);
+                    }
+                }
+
+                return new_struct;
+            }
+        }
+        else if constexpr (is_same_v<T, scalar_64ft> || is_same_v<T, matrix_64ft> || is_same_v<T, polynomial_64ft>)
+        {
+            if constexpr (is_same_v<T, scalar_64ft>)
+            {
+                T* new_struct = new T();
+                double* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        *(structure + col * i + row) = (double) *(obj + col * i + j);
+                    }
+                }
+
+                return new_struct;
+            }
+            else if constexpr (is_same_v<T, matrix_64ft>)
+            {
+                T* new_struct = new T(num_row, num_col);
+                double* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        *(structure + col * i + row) = (double) *(obj + col * i + j);
+                    }
+                }
+
+                return new_struct;
+            }
+            else
+            {
+                T* new_struct = new T(num_col);
+                double* structure = new_struct->return_content();
+                uint64_t row = *(new_struct->return_size());
+                uint64_t col = *(new_struct->return_size() + 1);
+
+                for(uint64_t i = 0; i < row; i++)
+                {
+                    for(uint64_t j = 0; j < col; j++)
+                    {
+                        *(structure + col * i + row) = (double) *(obj + col * i + j);
+                    }
+                }
+
+                return new_struct;
+            }
+        }
+        else
+        {
+            debug::print_error((char*)"util", (char*)"fetch", 0, (char*)"non exist struct");
+            debug::print_error_specific((char*)"given struct is not defined");
+            exit(-1);
+        }
+    }
+}
+
+template <typename T>
+void util::generate_file_struct(char* file_name)
+{
+    
+}
 
 // =================================================================================== //
 
@@ -530,8 +703,6 @@ void util::clear_random_seed()
 {
     gmp_randclear(state);
 }
-
-//-----------------------------------------//
 
 template <typename T>
 void util::uniform_random(T* obj, char* low, char* up)
@@ -1036,7 +1207,7 @@ void util::uniform_random_mt(T* obj, char* low, char* up)
                         {
                             break;
                         }
-                        
+                        else
                         {
                             continue;
                         }
@@ -1292,7 +1463,7 @@ void util::uniform_random_mt(T* obj, char* low, char* up)
                         {
                             break;
                         }
-                        
+                        else
                         {
                             continue;
                         }
@@ -1511,7 +1682,7 @@ void util::uniform_random_mt(T* obj, char* low, char* up)
                         {
                             break;
                         }
-                        
+                        else
                         {
                             continue;
                         }
@@ -1724,7 +1895,7 @@ void util::uniform_random_mt(T* obj, char* low, char* up)
                         {
                             break;
                         }
-                        
+                        else
                         {
                             continue;
                         }
@@ -1809,131 +1980,417 @@ void util::uniform_random_mt(T* obj, char* low, char* up)
     }
 }
 
-// matrix_zt* util::stack_vertical(matrix_zt* obj1, matrix_zt* obj2)
-// {
-//     if(obj1 == nullptr || obj2 == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"stack_vertical", 0, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* matrix_1= obj1->return_matrix();
-//         uint64_t row_1 = *(obj1->return_size());
-//         uint64_t col_1 = *(obj1->return_size() + 1);
+// =================================================================================== //
 
-//         mpz_t* matrix_2 = obj2->return_matrix();
-//         uint64_t row_2 = *(obj2->return_size());
-//         uint64_t col_2 = *(obj2->return_size() + 1);
-    
-//         if(col_1 != col_2)
-//         {
-//             debug::print_error((char*)"util", (char*)"stack_vertical", 0, (char*)"size unmatched");
-//             debug::print_error_specific((char*)"obj1 matrix and obj2 matrix column size unmatched");
-//             exit(-1);
-//         }
-//         else
-//         {
-//             matrix_zt* new_matrix_struct = new matrix_zt((row_1 + row_2), col_1);
-//             mpz_t* new_matrix = new_matrix_struct->return_matrix();
-//             uint64_t col = *(new_matrix_struct->return_size() + 1);
+template <typename T>
+T* util::stack_vertical(T* obj1, T* obj2)
+{
+    if(obj1 == nullptr || obj2 == nullptr)
+    {
+        debug::print_error((char*)"util", (char*)"stack_vertical", 0, (char*)"reference nullptr");
+        debug::print_error_specific((char*)"function attribution is nullptr");
+        exit(-1);
+    }
+    else
+    {
+        if constexpr (is_same_v<T, scalar_zt> || is_same_v<T, scalar_ft> || is_same_v<T, scalar_64it> || is_same_v<T, scalar_64ft>
+                    || is_same_v<T, polynomial_zt> || is_same_v<T, polynomial_ft> || is_same_v<T, polynomial_64it> || is_same_v<T, polynomial_64ft>)
+        {
+            debug::print_error((char*)"util", (char*)"stack_vertical", 0, (char*)"typename error");
+            debug::print_error_specific((char*)"obj's type doesn't support vertical stack");
+            exit(-1);
+        }
+        else if constexpr (is_same_v<T, matrix_zt> || is_same_v<T, matrix_ft> || is_same_v<T, matrix_64it> || is_same_v<T, matrix_64ft>)
+        {
+            uint64_t row1 = *(obj1->return_size());
+            uint64_t col1 = *(obj1->return_size() + 1);
+            uint64_t row2 = *(obj2->return_size());
+            uint64_t col2 = *(obj2->return_size() + 1);
 
-//             for(uint64_t i = 0; i < row_1; i++)
-//             {
-//                 for(uint64_t j = 0; j < col; j++)
-//                 {
-//                     mpz_set(*(new_matrix + col * i + j), *(matrix_1 + col_1 * i + j));
-//                 }
-//             }
-//             for(uint64_t i = 0; i < row_2; i++)
-//             {
-//                 for(uint64_t j = 0; j < col; j++)
-//                 {
-//                     mpz_set(*(new_matrix + col * i + j), *(matrix_2 + col_2 * i + j));
-//                 }
-//             }
-            
-//             return new_matrix_struct;
-//         }
-//     }
-// }
+            if(col1 != col2)
+            {
+                debug::print_error((char*)"util", (char*)"stack_vertical", 0, (char*)"size error");
+                debug::print_error_specific((char*)"obj1 and obj2 not suitable stacking vertical");
+                exit(-1);
+            }
+            else
+            {
+                if constexpr (is_same_v<T, matrix_zt>)
+                {
+                    T* new_struct = new T((row1 + row2), col1);
+                    mpz_t* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
 
-// matrix_zt* util::stack_horizon(matrix_zt* obj1, matrix_zt* obj2)
-// {
-//     if(obj1 == nullptr || obj2 == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"stack_horizon", 0, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* matrix_1= obj1->return_matrix();
-//         uint64_t row_1 = *(obj1->return_size());
-//         uint64_t col_1 = *(obj1->return_size() + 1);
+                    mpz_t* matrix1 = obj1->return_content();
+                    mpz_t* matrix2 = obj2->return_content();
 
-//         mpz_t* matrix_2 = obj2->return_matrix();
-//         uint64_t row_2 = *(obj2->return_size());
-//         uint64_t col_2 = *(obj2->return_size() + 1);
-    
-//         if(row_1 != row_2)
-//         {
-//             debug::print_error((char*)"util", (char*)"stack_horizon", 0, (char*)"size unmatched");
-//             debug::print_error_specific((char*)"obj1 matrix and obj2 matrix row size unmatched");
-//             exit(-1);
-//         }
-//         else
-//         {
-//             matrix_zt* new_matrix_struct = new matrix_zt(row_1, (col_1 + col_2));
-//             mpz_t* new_matrix = new_matrix_struct->return_matrix();
-//             uint64_t col = *(new_matrix_struct->return_size() + 1);
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        if(i < row1)
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                mpz_set(*(structure + col * i + j), *(matrix1 + col * i + j));
+                            }
+                        }
+                        else
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                mpz_set(*(structure + col * i + j), *(matrix2 + col * (i - row1) + j));
+                            }
+                        }
+                    }
 
-//             for(uint64_t i = 0; i < row_1; i++)
-//             {
-//                 for(uint64_t j = 0; j < col_1; j++)
-//                 {
-//                     mpz_set(*(new_matrix + col * i + j), *(matrix_1 + col_1 * i + j));
-//                 }
-//                 for(uint64_t j = col_1; j < col_2; j++)
-//                 {
-//                     mpz_set(*(new_matrix + col * i + j), *(matrix_2 + col_2 * i + j));
-//                 }
-//             }
-            
-//             return new_matrix_struct;
-//         }
-//     }
-// }
+                    return new_struct;
+                }
+                else if constexpr (is_same_v<T, matrix_ft>)
+                {
+                    T* new_struct = new T((row1 + row2), col1);
+                    mpf_t* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
 
-// polynomial_zt* util::stack_horizon(polynomial_zt* obj1, polynomial_zt* obj2)
-// {
-//     if(obj1 == nullptr || obj2 == nullptr)
-//     {
-//         debug::print_error((char*)"util", (char*)"stack_horizon", 1, (char*)"reference nullptr");
-//         debug::print_error_specific((char*)"function attribution is nullptr");
-//         exit(-1);
-//     }
-//     else
-//     {
-//         mpz_t* polynomial_1= obj1->return_polynomial();
-//         uint64_t order_1 = *(obj1->return_size() + 1);
+                    mpf_t* matrix1 = obj1->return_content();
+                    mpf_t* matrix2 = obj2->return_content();
 
-//         mpz_t* polynomial_2 = obj2->return_polynomial();
-//         uint64_t order_2 = *(obj2->return_size() + 1);
-    
-//         polynomial_zt* new_polynomial_struct = new polynomial_zt((order_1 + order_2));
-//         mpz_t* new_polynomial = new_polynomial_struct->return_polynomial();
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        if(i < row1)
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                mpf_set(*(structure + col * i + j), *(matrix1 + col * i + j));
+                            }
+                        }
+                        else
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                mpf_set(*(structure + col * i + j), *(matrix2 + col * (i - row1) + j));
+                            }
+                        }
+                    }
 
-//         for(uint64_t i = 0; i < order_1; i++)
-//         {
-//             mpz_set(*(new_polynomial + i), *(polynomial_1 + i));
-//         }
-//         for(uint64_t i = order_1; i < order_2; i++)
-//         {
-//             mpz_set(*(new_polynomial + i), *(polynomial_2 + i));
-//         }
-            
-//         return new_polynomial_struct;
-//     }
-// }
+                    return new_struct;
+                }
+                else if constexpr (is_same_v<T, matrix_64it>)
+                {
+                    T* new_struct = new T((row1 + row2), col1);
+                    int64_t* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
+
+                    int64_t* matrix1 = obj1->return_content();
+                    int64_t* matrix2 = obj2->return_content();
+
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        if(i < row1)
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                *(structure + col * i + j) = *(matrix1 + col * i + j);
+                            }
+                        }
+                        else
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                *(structure + col * i + j) = *(matrix2 + col * (i - row1) + j);
+                            }
+                        }
+                    }
+
+                    return new_struct;
+                }
+                else
+                {
+                    T* new_struct = new T((row1 + row2), col1);
+                    double* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
+
+                    double* matrix1 = obj1->return_content();
+                    double* matrix2 = obj2->return_content();
+
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        if(i < row1)
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                *(structure + col * i + j) = *(matrix1 + col * i + j);
+                            }
+                        }
+                        else
+                        {
+                            for(uint64_t j = 0; j < col; j++)
+                            {
+                                *(structure + col * i + j) = *(matrix2 + col * (i - row1) + j);
+                            }
+                        }
+                    }
+
+                    return new_struct;
+                }
+            }
+        }
+        else
+        {
+            debug::print_error((char*)"util", (char*)"stack_vertical", 0, (char*)"non exist struct");
+            debug::print_error_specific((char*)"given struct is not defined");
+            exit(-1);
+        }
+    }
+}
+
+template <typename T>
+T* util::stack_horizon(T* obj1, T* obj2)
+{
+    if(obj1 == nullptr || obj2 == nullptr)
+    {
+        debug::print_error((char*)"util", (char*)"stack_horizon", 0, (char*)"reference nullptr");
+        debug::print_error_specific((char*)"function attribution is nullptr");
+        exit(-1);
+    }
+    else
+    {
+        if constexpr (is_same_v<T, scalar_zt> || is_same_v<T, scalar_ft> || is_same_v<T, scalar_64it> || is_same_v<T, scalar_64ft>)
+        {
+            debug::print_error((char*)"util", (char*)"stack_horizon", 0, (char*)"typename error");
+            debug::print_error_specific((char*)"obj's type doesn't support horizonal stack");
+            exit(-1);
+        }
+        else if constexpr (is_same_v<T, matrix_zt> || is_same_v<T, matrix_ft> || is_same_v<T, matrix_64it> || is_same_v<T, matrix_64ft>)
+        {
+            uint64_t row1 = *(obj1->return_size());
+            uint64_t col1 = *(obj1->return_size() + 1);
+            uint64_t row2 = *(obj2->return_size());
+            uint64_t col2 = *(obj2->return_size() + 1);
+
+            if(row1 != row2)
+            {
+                debug::print_error((char*)"util", (char*)"stack_horizon", 0, (char*)"size error");
+                debug::print_error_specific((char*)"obj1 and obj2 not suitable stacking horizon");
+                exit(-1);
+            }
+            else
+            {
+                if constexpr (is_same_v<T, matrix_zt>)
+                {
+                    T* new_struct = new T(row1, (col1 + col2));
+                    mpz_t* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
+
+                    mpz_t* matrix1 = obj1->return_content();
+                    mpz_t* matrix2 = obj2->return_content();
+
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        for(uint64_t j = 0; j < col; j++)
+                        {
+                            if(j < col1)
+                            {
+                                mpz_set(*(structure + col * i + j), *(matrix1 + col1 * i + j));
+                            }
+                            else
+                            {
+                                mpz_set(*(structure + col * i + j), *(matrix2 + col2 * i + (j - col1)));
+                            }
+                        }
+                    }
+
+                    return new_struct;
+                }
+                else if constexpr (is_same_v<T, matrix_ft>)
+                {
+                    T* new_struct = new T(row1, (col1 + col2));
+                    mpf_t* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
+
+                    mpf_t* matrix1 = obj1->return_content();
+                    mpf_t* matrix2 = obj2->return_content();
+
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        for(uint64_t j = 0; j < col; j++)
+                        {
+                            if(j < col1)
+                            {
+                                mpf_set(*(structure + col * i + j), *(matrix1 + col1 * i + j));
+                            }
+                            else
+                            {
+                                mpf_set(*(structure + col * i + j), *(matrix2 + col2 * i + (j - col1)));
+                            }
+                        }
+                    }
+
+                    return new_struct;
+                }
+                else if constexpr (is_same_v<T, matrix_64it>)
+                {
+                    T* new_struct = new T(row1, (col1 + col2));
+                    int64_t* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
+
+                    int64_t* matrix1 = obj1->return_content();
+                    int64_t* matrix2 = obj2->return_content();
+
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        for(uint64_t j = 0; j < col; j++)
+                        {
+                            if(j < col1)
+                            {
+                                *(structure + col * i + j) = *(matrix1 + col1 * i + j);
+                            }
+                            else
+                            {
+                                *(structure + col * i + j) = *(matrix2 + col2 * i + (j - col1));
+                            }
+                        }
+                    }
+
+                    return new_struct;
+                }
+                else
+                {
+                    T* new_struct = new T(row1, (col1 + col2));
+                    double* structure = new_struct->return_content();
+                    uint64_t row = *(new_struct->return_size());
+                    uint64_t col = *(new_struct->return_size() + 1);
+
+                    double* matrix1 = obj1->return_content();
+                    double* matrix2 = obj2->return_content();
+
+                    for(uint64_t i = 0; i < row; i++)
+                    {
+                        for(uint64_t j = 0; j < col; j++)
+                        {
+                            if(j < col1)
+                            {
+                                *(structure + col * i + j) = *(matrix1 + col1 * i + j);
+                            }
+                            else
+                            {
+                                *(structure + col * i + j) = *(matrix2 + col2 * i + (j - col1));
+                            }
+                        }
+                    }
+
+                    return new_struct;
+                }
+            }
+        }
+        else if constexpr (is_same_v<T, polynomial_zt> || is_same_v<T, polynomial_ft> || is_same_v<T, polynomial_64it> || is_same_v<T, polynomial_64ft>)
+        {
+            uint64_t order1 = *(obj1->return_size() + 1);
+            uint64_t order2 = *(obj2->return_size() + 1);
+
+            if constexpr (is_same_v<T, polynomial_zt>)
+            {
+                T* new_struct = new T(order1 + order2);
+                mpz_t* structure = new_struct->return_content();
+                uint64_t order = *(new_struct->return_size() + 1);
+
+                mpz_t* polynomial1 = obj1->return_content();
+                mpz_t* polynomial2 = obj2->return_content();
+
+                for(uint64_t i = 0; i < order; i++)
+                {
+                    if(i < order1)
+                    {
+                        mpz_set(*(structure + i), *(polynomial1 + i));
+                    }
+                    else
+                    {
+                        mpz_set(*(structure + i), *(polynomial2 + (i - order1)));
+                    }
+                }
+
+                return new_struct;
+            }
+            else if constexpr (is_same_v<T, matrix_ft>)
+            {
+                T* new_struct = new T(order1 + order2);
+                mpf_t* structure = new_struct->return_content();
+                uint64_t order = *(new_struct->return_size() + 1);
+
+                mpf_t* polynomial1 = obj1->return_content();
+                mpf_t* polynomial2 = obj2->return_content();
+
+                for(uint64_t i = 0; i < order; i++)
+                {
+                    if(i < order1)
+                    {
+                        mpf_set(*(structure + i), *(polynomial1 + i));
+                    }
+                    else
+                    {
+                        mpf_set(*(structure + i), *(polynomial2 + (i - order1)));
+                    }
+                }
+
+                return new_struct;
+            }
+            else if constexpr (is_same_v<T, matrix_64it>)
+            {
+                T* new_struct = new T(order1 + order2);
+                int64_t* structure = new_struct->return_content();
+                uint64_t order = *(new_struct->return_size() + 1);
+
+                int64_t* polynomial1 = obj1->return_content();
+                int64_t* polynomial2 = obj2->return_content();
+
+                for(uint64_t i = 0; i < order; i++)
+                {
+                    if(i < order1)
+                    {
+                        *(structure + i) = *(polynomial1 + i);
+                    }
+                    else
+                    {
+                        *(structure + i) = *(polynomial2 + (i - order1));
+                    }
+                }
+
+                return new_struct;
+            }
+            else
+            {
+                T* new_struct = new T(order1 + order2);
+                double* structure = new_struct->return_content();
+                uint64_t order = *(new_struct->return_size() + 1);
+
+                double* polynomial1 = obj1->return_content();
+                double* polynomial2 = obj2->return_content();
+
+                for(uint64_t i = 0; i < order; i++)
+                {
+                    if(i < order1)
+                    {
+                        *(structure + i) = *(polynomial1 + i);
+                    }
+                    else
+                    {
+                        *(structure + i) = *(polynomial2 + (i - order1));
+                    }
+                }
+
+                return new_struct;
+            }
+        }
+        else
+        {
+            debug::print_error((char*)"util", (char*)"stack_horizon", 0, (char*)"non exist struct");
+            debug::print_error_specific((char*)"given struct is not defined");
+            exit(-1);
+        }
+    }
+}
