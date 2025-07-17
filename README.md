@@ -1,5 +1,5 @@
-# EPEC: Easy and high Precision for Encrypted Control Library
-암호제어를 위한 쉽고 고정밀의 라이브러리
+# EPEC: Easy and high Precision Encrypted Control Library
+쉽고 고정밀의 암호 제어 라이브러리
 
 (제어 공학을 위한 큰 정수와 고 정밀 실수의 다항식과 행렬 연산 다중 스레드 연산을 지원)
 
