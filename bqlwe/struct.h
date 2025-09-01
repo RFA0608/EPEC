@@ -6,6 +6,7 @@
 #include <gmpxx.h>
 
 // zt : mpz, ft : mpf, 64ft : double, 64it : int64_t
+// polynomial order = index number (ex, constant value section is poly[0])
 
 class scalar_zt
 {

@@ -11,16 +11,37 @@ using namespace std;
 int main()
 {
     // == test calc == //
-    matrix_zt* T1 = new matrix_zt(30, 10);
-    matrix_zt* T2 = new matrix_zt(30, 10);
+    matrix_ft* T1 = new matrix_ft(3, 3);
+    matrix_ft* T2 = new matrix_ft(3, 3);
+
+    polynomial_64ft* P1 = new polynomial_64ft(3);
+    polynomial_64ft* P2 = new polynomial_64ft(5);
 
     util::set_random_seed((unsigned long)time(NULL));
 
     // debug::print_runtime((char*)"util", (char*)"uniform_random", false);
-    util::uniform_random_mt<matrix_zt>(T1, (char*)"-10", (char*)"-1");
-    util::uniform_random_mt<matrix_zt>(T2, (char*)"1", (char*)"10");
-    matrix_zt* T3 = util::stack_vertical<matrix_zt>(T1, T2);
-    matrix_zt* T4 = util::stack_horizon<matrix_zt>(T1, T2);
+    util::uniform_random<matrix_ft>(T1, (char*)"0", (char*)"10");
+    util::uniform_random<matrix_ft>(T2, (char*)"0", (char*)"10");
+
+    // util::uniform_random<polynomial_zt>(P1, (char*)"0", (char*)"10");
+    // util::uniform_random<polynomial_zt>(P2, (char*)"0", (char*)"10");
+    util::set_entry<polynomial_64ft>(P1, (char*)"1", 1 , 1);
+    util::set_entry<polynomial_64ft>(P1, (char*)"2", 1 , 2);
+    util::set_entry<polynomial_64ft>(P1, (char*)"3", 1 , 3);
+    // util::set_entry<polynomial_zt>(P1, (char*)"3", 1 , 4);
+    // util::set_entry<polynomial_zt>(P1, (char*)"3", 1 , 5);
+
+    util::set_entry<polynomial_64ft>(P2, (char*)"4", 1 , 1);
+    util::set_entry<polynomial_64ft>(P2, (char*)"5", 1 , 2);
+    util::set_entry<polynomial_64ft>(P2, (char*)"6", 1 , 3);
+    util::set_entry<polynomial_64ft>(P2, (char*)"3", 1 , 4);
+    util::set_entry<polynomial_64ft>(P2, (char*)"3", 1 , 5);
+
+
+    matrix_ft* T3 = calc::add<matrix_ft>(T1, T2);
+    polynomial_64ft* P3 = calc::conv<polynomial_64ft>(P1, P2);
+    // matrix_zt* T3 = util::stack_vertical<matrix_zt>(T1, T2);
+    // matrix_zt* T4 = util::stack_horizon<matrix_zt>(T1, T2);
     // debug::print_runtime((char*)"util", (char*)"uniform_random", true);
 
     // debug::print_runtime((char*)"util", (char*)"uniform_random_mt", false);
@@ -59,10 +80,15 @@ int main()
     // Tsth = u::stack_horizon(Tt1, Tt2);
     // debug::print_runtime((char*)"util", (char*)"stack_horizon", true);
 
-    util::print_struct<matrix_zt>(T1);
-    util::print_struct<matrix_zt>(T2);
-    util::print_struct<matrix_zt>(T3);
-    util::print_struct<matrix_zt>(T4);
+    // util::print_struct<matrix_ft>(T1);
+    // util::print_struct<matrix_ft>(T2);
+    // util::print_struct<matrix_ft>(T3);
+
+    util::print_struct<polynomial_64ft>(P1);
+    util::print_struct<polynomial_64ft>(P2);
+    util::print_struct<polynomial_64ft>(P3);
+    // util::print_struct<matrix_zt>(T3);
+    // util::print_struct<matrix_zt>(T4);
     // u::print_struct_meta(T2);
     // u::print_struct_meta(To1);
     // u::print_struct_meta(To2);
@@ -73,10 +99,14 @@ int main()
     
     // debug::print_runtime((char*)"util", (char*)"clear", false);
     util::clear_random_seed();
-    util::clear<matrix_zt>(&T1);
-    util::clear<matrix_zt>(&T2);
-    util::clear<matrix_zt>(&T3);
-    util::clear<matrix_zt>(&T4);
+    util::clear<matrix_ft>(&T1);
+    util::clear<matrix_ft>(&T2);
+    util::clear<matrix_ft>(&T3);
+
+    util::clear<polynomial_64ft>(&P1);
+    util::clear<polynomial_64ft>(&P2);
+    util::clear<polynomial_64ft>(&P3);
+    // util::clear<matrix_zt>(&T4);
     // u::clear(&T2);
     // u::clear(&To1);
     // u::clear(&To2);
@@ -86,7 +116,7 @@ int main()
     // u::clear(&Tsth);
     // debug::print_runtime((char*)"util", (char*)"clear", true);
 
-    util::print_struct_meta<matrix_zt>(T1);
+    util::print_struct_meta<matrix_ft>(T1);
     // delete u;
     return 0;
 }

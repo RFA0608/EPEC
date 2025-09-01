@@ -26,6 +26,7 @@ void util::print_struct(T* obj)
             uint64_t col = *(obj->return_size() + 1);
 
             cout << "This struct type : " << obj->return_type() << " | row : " << row << " | col : " << col << endl;
+            cout << "[";
 
             for(uint64_t i = 0; i < row; i++)
             {
@@ -36,6 +37,15 @@ void util::print_struct(T* obj)
                     {
                         cout << ", ";
                     }
+                    else if(i != row - 1)
+                    {
+                        cout << ";";
+                    }
+                }
+
+                if(i == (row - 1))
+                {
+                    cout << "];";
                 }
                 cout << endl;
             }
@@ -47,6 +57,7 @@ void util::print_struct(T* obj)
             uint64_t col = *(obj->return_size() + 1);
 
             cout << "This struct type : " << obj->return_type() << " | row : " << row << " | col : " << col << endl;
+            cout << "[";
 
             for(uint64_t i = 0; i < row; i++)
             {
@@ -57,6 +68,16 @@ void util::print_struct(T* obj)
                     {
                         cout << ", ";
                     }
+                    else if(i != row - 1)
+                    {
+                        cout << ";";
+                    }
+                    
+                }
+
+                if(i == (row - 1))
+                {
+                    cout << "];";
                 }
                 cout << endl;
             }
@@ -68,6 +89,7 @@ void util::print_struct(T* obj)
             uint64_t col = *(obj->return_size() + 1);
 
             cout << "This struct type : " << obj->return_type() << " | row : " << row << " | col : " << col << endl;
+            cout << "[";
 
             for(uint64_t i = 0; i < row; i++)
             {
@@ -78,6 +100,15 @@ void util::print_struct(T* obj)
                     {
                         cout << ", ";
                     }
+                    else if(i != row - 1)
+                    {
+                        cout << ";";
+                    }
+                }
+
+                if(i == (row - 1))
+                {
+                    cout << "];";
                 }
                 cout << endl;
             }
@@ -89,6 +120,7 @@ void util::print_struct(T* obj)
             uint64_t col = *(obj->return_size() + 1);
 
             cout << "This struct type : " << obj->return_type() << " | row : " << row << " | col : " << col << endl;
+            cout << "[";
 
             for(uint64_t i = 0; i < row; i++)
             {
@@ -99,6 +131,15 @@ void util::print_struct(T* obj)
                     {
                         cout << ", ";
                     }
+                    else if(i != row - 1)
+                    {
+                        cout << ";";
+                    }
+                }
+
+                if(i == (row - 1))
+                {
+                    cout << "];";
                 }
                 cout << endl;
             }
@@ -401,38 +442,264 @@ void util::set_entry(T* obj, char* value, uint64_t pos_row, uint64_t pos_col)
         if constexpr (is_same_v<T, scalar_zt> || is_same_v<T, matrix_zt> || is_same_v<T, polynomial_zt>)
         {
             mpz_t* structure = obj->return_content();
+            uint64_t row = *(obj->return_size());
             uint64_t col = *(obj->return_size() + 1);
-
-            mpz_set_str(*(structure + col * (pos_col - 1) + (pos_row - 1)), value, 10);
+            
+            if constexpr(is_same_v<T, scalar_zt>)
+            {
+                if(pos_row != 1 || pos_col != 1)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    mpz_set_str(*(structure + col * (pos_row - 1) + (pos_col - 1)), value, 10);
+                }
+            }
+            else if constexpr(is_same_v<T, matrix_zt>)
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    mpz_set_str(*(structure + col * (pos_row - 1) + (pos_col - 1)), value, 10);
+                }
+            }
+            else
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    mpz_set_str(*(structure + col * (pos_row - 1) + (pos_col - 1)), value, 10);
+                }
+            }
         }
         else if constexpr (is_same_v<T, scalar_ft> || is_same_v<T, matrix_ft> || is_same_v<T, polynomial_ft>)
         {
             mpf_t* structure = obj->return_content();
+            uint64_t row = *(obj->return_size());
             uint64_t col = *(obj->return_size() + 1);
-
-            mpf_set_str(*(structure + col * (pos_col - 1) + (pos_row - 1)), value, 10);
+            
+            if constexpr(is_same_v<T, scalar_ft>)
+            {
+                if(pos_row != 1 || pos_col != 1)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    mpf_set_str(*(structure + col * (pos_row - 1) + (pos_col - 1)), value, 10);
+                }
+            }
+            else if constexpr(is_same_v<T, matrix_ft>)
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    mpf_set_str(*(structure + col * (pos_row - 1) + (pos_col - 1)), value, 10);
+                }
+            }
+            else
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    mpf_set_str(*(structure + col * (pos_row - 1) + (pos_col - 1)), value, 10);
+                }
+            }
         }
         else if constexpr (is_same_v<T, scalar_64it> || is_same_v<T, matrix_64it> || is_same_v<T, polynomial_64it>)
         {
             int64_t* structure = obj->return_content();
+            uint64_t row = *(obj->return_size());
             uint64_t col = *(obj->return_size() + 1);
 
-            int64_t value;
-            string_view svl(value);
-            from_chars(svl.data(), svl.data() + svl.size(), value);
+            if constexpr(is_same_v<T, scalar_64it>)
+            {
+                if(pos_row != 1 || pos_col != 1)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    int64_t int_value;
+                    string_view svl(value);
+                    auto result = from_chars(svl.data(), svl.data() + svl.size(), int_value);
 
-            *(structure + col * (pos_col - 1) * (pos_row - 1)) = value;
+                    if(result.ec != std::errc())
+                    {
+                        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"from_chars");
+                        debug::print_error_specific((char*)"from_chars get not number string");
+                        exit(-1);
+                    }
+                    else
+                    {
+                        *(structure + col * (pos_row - 1) + (pos_col - 1)) = int_value;
+                    }
+                }
+            }
+            else if constexpr(is_same_v<T, matrix_64it>)
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    int64_t int_value;
+                    string_view svl(value);
+                    auto result = from_chars(svl.data(), svl.data() + svl.size(), int_value);
+
+                    if(result.ec != std::errc())
+                    {
+                        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"from_chars");
+                        debug::print_error_specific((char*)"from_chars get not number string");
+                        exit(-1);
+                    }
+                    else
+                    {
+                        *(structure + col * (pos_row - 1) + (pos_col - 1)) = int_value;
+                    }
+                }
+            }
+            else
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    int64_t int_value;
+                    string_view svl(value);
+                    auto result = from_chars(svl.data(), svl.data() + svl.size(), int_value);
+
+                    if(result.ec != std::errc())
+                    {
+                        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"from_chars");
+                        debug::print_error_specific((char*)"from_chars get not number string");
+                        exit(-1);
+                    }
+                    else
+                    {
+                        *(structure + col * (pos_row - 1) + (pos_col - 1)) = int_value;
+                    }
+                }
+            }
         }
         else if constexpr (is_same_v<T, scalar_64ft> || is_same_v<T, matrix_64ft> || is_same_v<T, polynomial_64ft>)
         {
             double* structure = obj->return_content();
+            uint64_t row = *(obj->return_size());
             uint64_t col = *(obj->return_size() + 1);
 
-            double value;
-            string_view svl(value);
-            from_chars(svl.data(), svl.data() + svl.size(), value);
+            if constexpr(is_same_v<T, scalar_64ft>)
+            {
+                if(pos_row != 1 || pos_col != 1)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    double double_value;
+                    string_view svl(value);
+                    auto result = from_chars(svl.data(), svl.data() + svl.size(), double_value);
 
-            *(structure + col * (pos_col - 1) * (pos_row - 1)) = value;
+                    if(result.ec != std::errc())
+                    {
+                        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"from_chars");
+                        debug::print_error_specific((char*)"from_chars get not number string");
+                        exit(-1);
+                    }
+                    else
+                    {
+                        *(structure + col * (pos_row - 1) + (pos_col - 1)) = double_value;
+                    }
+                }
+            }
+            else if constexpr(is_same_v<T, matrix_64ft>)
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    double double_value;
+                    string_view svl(value);
+                    auto result = from_chars(svl.data(), svl.data() + svl.size(), double_value);
+
+                    if(result.ec != std::errc())
+                    {
+                        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"from_chars");
+                        debug::print_error_specific((char*)"from_chars get not number string");
+                        exit(-1);
+                    }
+                    else
+                    {
+                        *(structure + col * (pos_row - 1) + (pos_col - 1)) = double_value;
+                    }
+                }
+            }
+            else
+            {
+                if(pos_row > row || pos_col > col)
+                {
+                    debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"size error");
+                    debug::print_error_specific((char*)"obj not suitable");
+                    exit(-1);
+                }
+                else
+                {
+                    double double_value;
+                    string_view svl(value);
+                    auto result = from_chars(svl.data(), svl.data() + svl.size(), double_value);
+
+                    if(result.ec != std::errc())
+                    {
+                        debug::print_error((char*)"util", (char*)"set_entry", 0, (char*)"from_chars");
+                        debug::print_error_specific((char*)"from_chars get not number string");
+                        exit(-1);
+                    }
+                    else
+                    {
+                        *(structure + col * (pos_row - 1) + (pos_col - 1)) = double_value;
+                    }
+                }
+            }
         }
         else
         {
@@ -2316,7 +2583,7 @@ T* util::stack_horizon(T* obj1, T* obj2)
 
                 return new_struct;
             }
-            else if constexpr (is_same_v<T, matrix_ft>)
+            else if constexpr (is_same_v<T, polynomial_ft>)
             {
                 T* new_struct = new T(order1 + order2);
                 mpf_t* structure = new_struct->return_content();
@@ -2339,7 +2606,7 @@ T* util::stack_horizon(T* obj1, T* obj2)
 
                 return new_struct;
             }
-            else if constexpr (is_same_v<T, matrix_64it>)
+            else if constexpr (is_same_v<T, polynomial_64it>)
             {
                 T* new_struct = new T(order1 + order2);
                 int64_t* structure = new_struct->return_content();

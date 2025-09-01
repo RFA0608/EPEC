@@ -7,13 +7,23 @@
 class calc
 {
     public:
-        static matrix_zt* multiple(matrix_zt* obj1, matrix_zt* obj2); 
-        static polynomial_zt* multiple(polynomial_zt* obj1, polynomial_zt* obj2);
-        static matrix_zt* multiple_mt(matrix_zt* obj1, matrix_zt* obj2); 
-        static polynomial_zt* multiple_mt(polynomial_zt* obj1, polynomial_zt* obj2);
+        template <typename T>
+        static T* mult(T* obj1, T* obj2);
+        
+        // template <typename T>
+        // static T* mult_mt(T* obj1, T* obj2);
 
-        static polynomial_zt* convolution(polynomial_zt* obj1, polynomial_zt* obj2);
-        static polynomial_zt* convolution_mt(polynomial_zt* obj1, polynomial_zt* obj2);
+        template <typename T>
+        static T* conv(T* obj1, T* obj2);
+
+        // template <typename T>
+        // static T* conv_mt(T* obj1, T* obj2);
+
+        template <typename T>
+        static T* add(T* obj1, T* obj2);
+
+        // static polynomial_zt* convolution(polynomial_zt* obj1, polynomial_zt* obj2);
+        // static polynomial_zt* convolution_mt(polynomial_zt* obj1, polynomial_zt* obj2);
 
         static matrix_zt* add(matrix_zt* obj1, matrix_zt* obj2);
         static polynomial_zt* add(polynomial_zt* obj1, polynomial_zt* obj2);
@@ -37,5 +47,7 @@ class calc
         
         static polynomial_zt* ring_modulo(polynomial_zt* obj, mpz_t N);
 };
+
+#include "calc.tpp"
 
 #endif
